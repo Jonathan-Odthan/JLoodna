@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Détail Produit | Jloodna Global Trading</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/favicon.svg">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    .product-page { display:grid; grid-template-columns:1fr 1fr; gap:48px; padding:40px 0; align-items:start; }
+    .product-gallery { position:sticky; top:80px; }
+    .main-img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:16px; background:var(--gray-50); }
+    .thumbnails { display:flex; gap:10px; margin-top:12px; }
+    .thumb { width:70px; height:70px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid transparent; transition:all .2s; opacity:.7; }
+    .thumb.active,.thumb:hover { border-color:var(--accent); opacity:1; }
+    .product-info-section { margin-bottom:24px; }
+    .variant-label { font-weight:600; font-size:.9rem; color:var(--primary); margin-bottom:10px; }
+    .size-options { display:flex; flex-wrap:wrap; gap:8px; }
+    .size-opt { padding:8px 16px; border:2px solid var(--gray-200); border-radius:8px; font-size:.85rem; font-weight:500; cursor:pointer; transition:all .2s; }
+    .size-opt:hover,.size-opt.selected { border-color:var(--accent); background:#FFF9ED; color:var(--accent-dark); }
+    .size-opt.unavailable { opacity:.4; text-decoration:line-through; cursor:not-allowed; }
+    .color-options { display:flex; flex-wrap:wrap; gap:10px; }
+    .color-opt { width:28px; height:28px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:all .2s; position:relative; }
+    .color-opt.selected { border-color:var(--primary); transform:scale(1.1); }
+    .color-opt.selected::after { content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--white); font-size:.6rem; font-weight:900; }
+    .review-item { padding:20px 0; border-bottom:1px solid var(--gray-100); }
+    .review-header { display:flex; align-items:center; gap:12px; margin-bottom:10px; flex-wrap:wrap; }
+    .review-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--accent)); display:flex; align-items:center; justify-content:center; color:var(--white); font-weight:700; font-size:.85rem; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+    .spec-row { display:flex; padding:10px 0; border-bottom:1px solid var(--gray-100); font-size:.9rem; }
+    .spec-key { color:var(--gray-500); width:160px; flex-shrink:0; font-weight:500; }
+    .spec-val { color:var(--gray-800); flex:1; }
+    @media(max-width:900px){.product-page{grid-template-columns:1fr;}.product-gallery{position:static;}}
+    @media(max-width:600px){.thumbnails{overflow-x:auto;}.thumb{width:56px;height:56px;flex-shrink:0;}}
+  </style>
+</head>
+<body>
+
+<div class="header-top"><div class="ticker"><span>🚚 Livraison gratuite dès G 15,000</span><span>🔒 Paiement sécurisé 100%</span></div></div>
+<header class="header-main">
+  <div class="header-inner">
+    <a href="index.html" class="logo"><img src="../assets/images/logo.svg" alt="Jloodna" class="logo-img"><div><div class="logo-text">Jloodna</div><div class="logo-sub">Global Trading</div></div></a>
+    <div class="search-bar"><select><option>Toutes</option></select><input type="text" id="main-search" placeholder="Rechercher..."><button id="search-btn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button><div id="search-suggestions" style="position:absolute;top:100%;left:0;right:0;background:#fff;display:none"></div></div>
+    <div class="header-actions">
+      <select class="currency-switcher" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);padding:6px 10px;border-radius:6px;font-size:.8rem"><option value="HTG">HTG G</option><option value="USD">USD $</option></select>
+      <button class="icon-btn" id="notif-btn" style="position:relative"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span>Alertes</span><span class="badge" id="notif-badge" style="display:none">0</span></button>
+      <button class="icon-btn" onclick="Cart.open()" style="position:relative"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Panier</span><span class="badge" id="cart-badge">0</span></button>
+      <a href="login.html" class="icon-btn" id="login-btn"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Connexion</span></a>
+      <div id="user-menu" style="display:none"><button class="icon-btn"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="user-name">Compte</span></button></div>
+    </div>
+  </div>
+</header>
+<nav class="header-nav">
+  <div class="nav-inner"><a href="shop.html" class="nav-all-btn">☰ Catégories</a><div class="nav-links"><a href="index.html" class="nav-link">Accueil</a><a href="shop.html" class="nav-link">Boutique</a><a href="shop.html?filter=promo" class="nav-link" style="color:#E8C97A">🔥 Promos</a></div></div>
+</nav>
+<div id="notif-panel" class="notif-panel"><div class="notif-panel-header"><span class="notif-panel-title">🔔 Notifications</span><span class="realtime-badge"><span class="realtime-dot"></span>Live</span></div><div class="notif-panel-body" id="notif-panel-body"></div></div>
+
+<main>
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Accueil</a><span class="sep">›</span><a href="shop.html">Boutique</a><span class="sep">›</span><a href="shop.html?cat=electronics">Électronique</a><span class="sep">›</span><span class="current" id="breadcrumb-name">Produit</span></div>
+
+    <div class="product-page" id="product-detail">
+      <!-- GALLERY -->
+      <div class="product-gallery">
+        <div style="position:relative">
+          <img id="main-product-img" class="main-img" src="https://via.placeholder.com/600x600/0A1628/C9A84C?text=Produit" alt="Produit">
+          <div style="position:absolute;top:12px;left:12px;display:flex;flex-direction:column;gap:6px" id="product-badges-display"></div>
+          <button id="wishlist-btn-main" style="position:absolute;top:12px;right:12px;width:40px;height:40px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.12);color:#9CA3AF;font-size:1.2rem;transition:all .2s">❤</button>
+        </div>
+        <div class="thumbnails" id="thumbnails">
+          <img class="thumb active" src="https://via.placeholder.com/600x600/0A1628/C9A84C?text=Vue+1" alt="Vue 1" onclick="setMainImg(this)">
+          <img class="thumb" src="https://via.placeholder.com/600x600/1A3A5C/ffffff?text=Vue+2" alt="Vue 2" onclick="setMainImg(this)">
+          <img class="thumb" src="https://via.placeholder.com/600x600/112240/E8C97A?text=Vue+3" alt="Vue 3" onclick="setMainImg(this)">
+          <img class="thumb" src="https://via.placeholder.com/600x600/0D2B4A/C9A84C?text=Vue+4" alt="Vue 4" onclick="setMainImg(this)">
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="product-info">
+        <div class="product-info-section">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span class="badge badge-hot" id="product-badge">Populaire</span>
+            <span class="realtime-badge"><span class="realtime-dot"></span> <span id="viewers-count">12</span> personnes regardent</span>
+          </div>
+          <div style="color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px" id="product-category">Électronique</div>
+          <h1 style="font-size:clamp(1.4rem,2.5vw,2rem);color:var(--primary);margin-bottom:12px" id="product-name">iPhone 15 Pro 256GB</h1>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+            <div class="product-rating"><span class="stars" id="product-stars">★★★★★</span><span class="rating-count" id="product-reviews">(234 avis)</span></div>
+            <span style="color:var(--gray-400)">|</span>
+            <span style="font-size:.85rem;color:var(--success);font-weight:600" id="product-stock-badge">✓ En stock</span>
+            <span style="color:var(--gray-400)">|</span>
+            <span style="font-size:.85rem;color:var(--gray-500)" id="product-sku">SKU: JL-001234</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px">
+            <span style="font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--primary)" id="product-price">G 45,000</span>
+            <span style="font-size:1rem;color:var(--gray-400);text-decoration:line-through" id="product-old-price">G 52,000</span>
+            <span style="background:#FEE2E2;color:var(--danger);padding:4px 10px;border-radius:20px;font-size:.8rem;font-weight:700" id="product-discount">-13%</span>
+          </div>
+          <div style="background:#D1FAE5;color:#065F46;padding:8px 14px;border-radius:8px;font-size:.85rem;font-weight:500;display:inline-flex;align-items:center;gap:6px;margin-bottom:20px">
+            💰 Économisez G 7,000 avec cette offre
+          </div>
+        </div>
+
+        <!-- VARIANTS -->
+        <div class="product-info-section">
+          <div class="variant-label">Couleur: <span style="color:var(--gray-600);font-weight:400" id="selected-color">Titane noir</span></div>
+          <div class="color-options">
+            <div class="color-opt selected" style="background:#1C1C1E" title="Titane noir" onclick="selectColor(this,'Titane noir')"></div>
+            <div class="color-opt" style="background:#E8E0D5" title="Titane naturel" onclick="selectColor(this,'Titane naturel')"></div>
+            <div class="color-opt" style="background:#4B5563" title="Titane blanc" onclick="selectColor(this,'Titane blanc')"></div>
+            <div class="color-opt" style="background:#B45309" title="Titane bleu" onclick="selectColor(this,'Titane bleu')"></div>
+          </div>
+        </div>
+
+        <div class="product-info-section">
+          <div class="variant-label">Stockage: <span style="color:var(--gray-600);font-weight:400" id="selected-storage">256 GB</span></div>
+          <div class="size-options">
+            <div class="size-opt selected" onclick="selectStorage(this,'128 GB')">128 GB</div>
+            <div class="size-opt" onclick="selectStorage(this,'256 GB')">256 GB</div>
+            <div class="size-opt" onclick="selectStorage(this,'512 GB')">512 GB</div>
+            <div class="size-opt unavailable" title="Épuisé">1 TB</div>
+          </div>
+        </div>
+
+        <!-- QTY & ADD TO CART -->
+        <div class="product-info-section">
+          <div class="variant-label">Quantité:</div>
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+            <div class="qty-control" style="transform:scale(1.1)">
+              <button class="qty-btn" onclick="changeQty(-1)">−</button>
+              <input class="qty-val" type="number" id="qty-input" value="1" min="1" max="10" style="width:48px">
+              <button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+            <span style="font-size:.8rem;color:var(--gray-500)" id="stock-left">15 disponibles</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+          <button class="btn btn-primary btn-lg" style="flex:1;min-width:180px" onclick="addToCartMain()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Ajouter au Panier
+          </button>
+          <button class="btn btn-dark btn-lg" style="flex:1;min-width:180px" onclick="location.href='checkout.html'">
+            ⚡ Acheter maintenant
+          </button>
+        </div>
+
+        <button id="wishlist-btn-text" style="display:flex;align-items:center;gap:8px;color:var(--gray-600);font-size:.9rem;padding:8px 0;background:none;border:none;cursor:pointer;font-family:var(--font-body)" onclick="toggleWishlistMain()">
+          ❤ Ajouter aux favoris
+        </button>
+
+        <!-- DELIVERY INFO -->
+        <div style="background:var(--gray-50);border-radius:12px;padding:16px;margin-top:20px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;gap:12px;align-items:center;font-size:.875rem">
+              <span style="font-size:1.2rem">🚚</span>
+              <div><strong>Livraison standard:</strong> <span style="color:var(--gray-600)">2-5 jours ouvrables — G 800</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;font-size:.875rem">
+              <span style="font-size:1.2rem">⚡</span>
+              <div><strong>Livraison express:</strong> <span style="color:var(--gray-600)">24h — G 2,000</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;font-size:.875rem">
+              <span style="font-size:1.2rem">↩️</span>
+              <div><strong>Retours gratuits:</strong> <span style="color:var(--gray-600)">30 jours</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;font-size:.875rem">
+              <span style="font-size:1.2rem">🛡️</span>
+              <div><strong>Garantie:</strong> <span style="color:var(--gray-600)">12 mois constructeur</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SHARE -->
+        <div style="margin-top:16px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:.85rem;color:var(--gray-500)">Partager:</span>
+          <button style="padding:6px 12px;border-radius:6px;background:#1877F2;color:#fff;font-size:.75rem;font-weight:600">f Facebook</button>
+          <button style="padding:6px 12px;border-radius:6px;background:#25D366;color:#fff;font-size:.75rem;font-weight:600">WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div style="background:var(--white);border-radius:16px;box-shadow:var(--shadow-sm);padding:28px;margin-bottom:40px">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('description',this)">Description</button>
+        <button class="tab-btn" onclick="switchTab('specs',this)">Spécifications</button>
+        <button class="tab-btn" onclick="switchTab('reviews',this)">Avis (234)</button>
+        <button class="tab-btn" onclick="switchTab('shipping',this)">Livraison</button>
+      </div>
+
+      <div class="tab-content active" id="tab-description">
+        <div style="line-height:1.8;color:var(--gray-700)">
+          <p style="margin-bottom:16px">L'iPhone 15 Pro représente le summum de la technologie mobile. Conçu avec une structure en titane ultra-résistante, il offre des performances exceptionnelles grâce à la puce A17 Pro.</p>
+          <h4 style="margin-bottom:12px;color:var(--primary)">Caractéristiques principales :</h4>
+          <ul style="list-style:disc;padding-left:20px;display:flex;flex-direction:column;gap:8px;color:var(--gray-700)">
+            <li>Écran Super Retina XDR OLED 6.1" – 2556 x 1179 pixels</li>
+            <li>Puce A17 Pro – performances inégalées</li>
+            <li>Système photo pro : 48 MP principal + 12 MP ultra grand-angle + 12 MP téléobjectif</li>
+            <li>USB-C avec USB 3 – transfert ultra-rapide</li>
+            <li>Bouton Action personnalisable</li>
+            <li>Autonomie jusqu'à 23 heures de lecture vidéo</li>
+            <li>iOS 17 – dernier système d'exploitation</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-specs">
+        <div class="spec-row"><div class="spec-key">Marque</div><div class="spec-val">Apple</div></div>
+        <div class="spec-row"><div class="spec-key">Modèle</div><div class="spec-val">iPhone 15 Pro</div></div>
+        <div class="spec-row"><div class="spec-key">Écran</div><div class="spec-val">6.1" OLED Super Retina XDR</div></div>
+        <div class="spec-row"><div class="spec-key">Processeur</div><div class="spec-val">Apple A17 Pro (3nm)</div></div>
+        <div class="spec-row"><div class="spec-key">RAM</div><div class="spec-val">8 GB</div></div>
+        <div class="spec-row"><div class="spec-key">Stockage</div><div class="spec-val">128 / 256 / 512 GB</div></div>
+        <div class="spec-row"><div class="spec-key">Batterie</div><div class="spec-val">3274 mAh</div></div>
+        <div class="spec-row"><div class="spec-key">Caméra principale</div><div class="spec-val">48 MP f/1.78</div></div>
+        <div class="spec-row"><div class="spec-key">Système</div><div class="spec-val">iOS 17</div></div>
+        <div class="spec-row"><div class="spec-key">Connectivité</div><div class="spec-val">5G, Wi-Fi 6E, Bluetooth 5.3, USB-C</div></div>
+        <div class="spec-row"><div class="spec-key">Poids</div><div class="spec-val">187 g</div></div>
+        <div class="spec-row"><div class="spec-key">Dimensions</div><div class="spec-val">146.6 × 70.6 × 8.25 mm</div></div>
+        <div class="spec-row"><div class="spec-key">Résistance</div><div class="spec-val">IP68</div></div>
+        <div class="spec-row"><div class="spec-key">Garantie</div><div class="spec-val">12 mois constructeur</div></div>
+      </div>
+
+      <div class="tab-content" id="tab-reviews">
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:32px;margin-bottom:32px;align-items:start">
+          <div style="text-align:center;background:var(--gray-50);border-radius:12px;padding:24px">
+            <div style="font-family:var(--font-display);font-size:3rem;font-weight:700;color:var(--primary)">4.9</div>
+            <div style="color:var(--warning);font-size:1.2rem;margin:6px 0">★★★★★</div>
+            <div style="font-size:.8rem;color:var(--gray-500)">234 avis</div>
+          </div>
+          <div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:.8rem;width:40px;color:var(--gray-600)">5 ★</span><div style="flex:1;height:8px;background:var(--gray-100);border-radius:4px;overflow:hidden"><div style="width:78%;height:100%;background:var(--warning);border-radius:4px"></div></div><span style="font-size:.8rem;color:var(--gray-500);width:30px">78%</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:.8rem;width:40px;color:var(--gray-600)">4 ★</span><div style="flex:1;height:8px;background:var(--gray-100);border-radius:4px;overflow:hidden"><div style="width:15%;height:100%;background:var(--warning);border-radius:4px"></div></div><span style="font-size:.8rem;color:var(--gray-500);width:30px">15%</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:.8rem;width:40px;color:var(--gray-600)">3 ★</span><div style="flex:1;height:8px;background:var(--gray-100);border-radius:4px;overflow:hidden"><div style="width:5%;height:100%;background:var(--warning);border-radius:4px"></div></div><span style="font-size:.8rem;color:var(--gray-500);width:30px">5%</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:.8rem;width:40px;color:var(--gray-600)">2 ★</span><div style="flex:1;height:8px;background:var(--gray-100);border-radius:4px;overflow:hidden"><div style="width:1%;height:100%;background:var(--warning);border-radius:4px"></div></div><span style="font-size:.8rem;color:var(--gray-500);width:30px">1%</span></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-size:.8rem;width:40px;color:var(--gray-600)">1 ★</span><div style="flex:1;height:8px;background:var(--gray-100);border-radius:4px;overflow:hidden"><div style="width:1%;height:100%;background:var(--danger);border-radius:4px"></div></div><span style="font-size:.8rem;color:var(--gray-500);width:30px">1%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="reviews-list">
+          <div class="review-item">
+            <div class="review-header">
+              <div class="review-avatar">MJ</div>
+              <div><div style="font-weight:600;color:var(--primary);font-size:.9rem">Marie Jean</div><div style="font-size:.75rem;color:var(--gray-500)">Il y a 3 jours · Achat vérifié ✓</div></div>
+              <div class="stars" style="margin-left:auto">★★★★★</div>
+            </div>
+            <p style="color:var(--gray-700);font-size:.9rem;line-height:1.6">Excellent produit! La qualité est au rendez-vous, l'écran est magnifique et la batterie tient très bien. Livraison rapide et emballage soigné. Je recommande vivement Jloodna!</p>
+          </div>
+          <div class="review-item">
+            <div class="review-header">
+              <div class="review-avatar">PD</div>
+              <div><div style="font-weight:600;color:var(--primary);font-size:.9rem">Pierre Dupont</div><div style="font-size:.75rem;color:var(--gray-500)">Il y a 1 semaine · Achat vérifié ✓</div></div>
+              <div class="stars" style="margin-left:auto">★★★★★</div>
+            </div>
+            <p style="color:var(--gray-700);font-size:.9rem;line-height:1.6">Très satisfait de mon achat. L'iPhone 15 Pro est vraiment impressionnant, les photos sont superbes. Le service client a été très réactif pour mes questions.</p>
+          </div>
+        </div>
+
+        <!-- Write review form -->
+        <div style="background:var(--gray-50);border-radius:12px;padding:24px;margin-top:24px">
+          <h4 style="margin-bottom:16px;color:var(--primary)">✍️ Écrire un avis</h4>
+          <div class="star-rating" id="write-rating" style="margin-bottom:16px;gap:4px">
+            <span class="star" onclick="setReviewRating(1)">★</span><span class="star" onclick="setReviewRating(2)">★</span><span class="star" onclick="setReviewRating(3)">★</span><span class="star" onclick="setReviewRating(4)">★</span><span class="star" onclick="setReviewRating(5)">★</span>
+          </div>
+          <textarea class="form-input" placeholder="Partagez votre expérience avec ce produit..." rows="4" id="review-text"></textarea>
+          <button class="btn btn-primary" style="margin-top:12px" onclick="submitReview()">Publier l'avis</button>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-shipping">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="background:var(--gray-50);border-radius:12px;padding:20px">
+            <h4 style="color:var(--primary);margin-bottom:12px">🚚 Options de livraison</h4>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--gray-100)"><div><strong>Livraison standard</strong><div style="font-size:.85rem;color:var(--gray-500)">2-5 jours ouvrables</div></div><div style="font-weight:700;color:var(--primary)">G 800</div></div>
+              <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--gray-100)"><div><strong>Livraison express</strong><div style="font-size:.85rem;color:var(--gray-500)">24-48 heures</div></div><div style="font-weight:700;color:var(--primary)">G 2,000</div></div>
+              <div style="display:flex;justify-content:space-between;padding:12px 0"><div><strong>Livraison gratuite</strong><div style="font-size:.85rem;color:var(--gray-500)">Pour les commandes supérieures à G 15,000</div></div><div style="font-weight:700;color:var(--success)">Gratuit</div></div>
+            </div>
+          </div>
+          <div style="background:var(--gray-50);border-radius:12px;padding:20px">
+            <h4 style="color:var(--primary);margin-bottom:12px">↩️ Politique de retour</h4>
+            <p style="color:var(--gray-600);font-size:.9rem;line-height:1.7">Retours acceptés dans les 30 jours suivant la réception. Le produit doit être dans son état d'origine. Les frais de retour sont à notre charge en cas de défaut. <a href="returns.html" style="color:var(--accent-dark);font-weight:600">En savoir plus →</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELATED PRODUCTS -->
+    <div style="margin-bottom:60px">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <span class="section-eyebrow">Vous pourriez aimer</span>
+          <h2 class="section-title">Produits Similaires</h2>
+          <div class="section-divider"></div>
+        </div>
+      </div>
+      <div class="products-grid" id="related-products"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="logo" style="display:inline-flex;margin-bottom:12px"><img src="../assets/images/logo.svg" alt="Jloodna" style="width:40px;height:40px;border-radius:8px;margin-right:10px"><div><div class="logo-text">Jloodna</div><div class="logo-sub">Global Trading</div></div></a><p class="footer-desc">La boutique en ligne de référence en Haïti.</p></div>
+    <div class="footer-col"><h4>Boutique</h4><div class="footer-links"><a href="shop.html">Tous les produits</a><a href="shop.html?filter=promo">Promotions</a></div></div>
+    <div class="footer-col"><h4>Compte</h4><div class="footer-links"><a href="account.html">Mon Compte</a><a href="orders.html">Commandes</a></div></div>
+    <div class="footer-col"><h4>Aide</h4><div class="footer-links"><a href="faq.html">FAQ</a><a href="contact.html">Contact</a></div></div>
+  </div>
+  <div class="footer-bottom"><div>© 2025 Jloodna | Global Trading</div><div class="footer-payments"><span class="payment-icon">HTG</span><span class="payment-icon">NATCASH</span><span class="payment-icon">CSH DIREK</span><span class="payment-icon">VISA</span><span class="payment-icon">MASTER</span></div></div>
+</footer>
+
+<button class="scroll-top" id="scroll-top"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg></button>
+
+<div id="cart-overlay" class="cart-overlay">
+  <div class="cart-drawer">
+    <div class="cart-header"><span class="cart-title">🛒 Panier</span><button onclick="Cart.close()" style="color:#6b7280;font-size:1.5rem;background:none;border:none;cursor:pointer">×</button></div>
+    <div class="cart-body" id="cart-body"></div>
+    <div class="cart-footer"><div class="cart-total-row total"><span>Total</span><span id="cart-total">G 0.00</span></div><a href="checkout.html" class="btn btn-primary btn-block" style="margin-top:12px">Passer la commande →</a></div>
+  </div>
+</div>
+<div id="toast-container" class="toast-container"></div>
+
+<script src="../assets/js/app.js"></script>
+<script>
+function setMainImg(thumb) {
+  document.getElementById('main-product-img').src = thumb.src;
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  thumb.classList.add('active');
+}
+
+function selectColor(el, name) {
+  document.querySelectorAll('.color-opt').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('selected-color').textContent = name;
+}
+
+function selectStorage(el, val) {
+  document.querySelectorAll('.size-opt:not(.unavailable)').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('selected-storage').textContent = val;
+}
+
+function changeQty(delta) {
+  const input = document.getElementById('qty-input');
+  input.value = Math.max(1, Math.min(10, parseInt(input.value) + delta));
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+let reviewRating = 0;
+function setReviewRating(r) {
+  reviewRating = r;
+  document.querySelectorAll('#write-rating .star').forEach((s, i) => s.classList.toggle('filled', i < r));
+}
+
+function submitReview() {
+  const text = document.getElementById('review-text').value.trim();
+  if (!reviewRating) { Toast.warning('Sélectionnez une note', 'Veuillez évaluer ce produit'); return; }
+  if (!text) { Toast.warning('Avis vide', 'Veuillez écrire votre avis'); return; }
+  Toast.success('Avis publié!', 'Merci pour votre retour.');
+  document.getElementById('review-text').value = '';
+  reviewRating = 0;
+  document.querySelectorAll('#write-rating .star').forEach(s => s.classList.remove('filled'));
+}
+
+function addToCartMain() {
+  const qty = parseInt(document.getElementById('qty-input').value);
+  const color = document.getElementById('selected-color').textContent;
+  const storage = document.getElementById('selected-storage').textContent;
+  Cart.add({ id: 'p1', name: 'iPhone 15 Pro 256GB', price: 45000, image: document.getElementById('main-product-img').src, qty, variant: `${color} / ${storage}`, stock: 15 });
+}
+
+function toggleWishlistMain() {
+  Wishlist.toggle({ id: 'p1', name: 'iPhone 15 Pro 256GB', price: 45000, image: document.getElementById('main-product-img').src });
+  const btn = document.getElementById('wishlist-btn-text');
+  const mainBtn = document.getElementById('wishlist-btn-main');
+  const isWish = Wishlist.has('p1');
+  btn.innerHTML = isWish ? '❤️ Retiré des favoris' : '❤ Ajouter aux favoris';
+  if (mainBtn) mainBtn.style.color = isWish ? '#E63946' : '#9CA3AF';
+}
+
+// Related products
+document.addEventListener('DOMContentLoaded', () => {
+  const rel = document.getElementById('related-products');
+  if (rel) {
+    const relData = [
+      { id:'p2', name:'Samsung Galaxy S24 Ultra', category:'Électronique', price:52000, rating:4.8, reviews:189, image:'https://via.placeholder.com/400x400/1A3A5C/ffffff?text=Samsung', badge:'new', stock:8 },
+      { id:'p3', name:'MacBook Air M2', category:'Électronique', price:85000, oldPrice:95000, rating:4.9, reviews:312, image:'https://via.placeholder.com/400x400/0A1628/C9A84C?text=MacBook', badge:'hot', stock:5 },
+      { id:'p8', name:'ASUS ROG Gaming Laptop', category:'Électronique', price:120000, oldPrice:135000, rating:4.9, reviews:67, image:'https://via.placeholder.com/400x400/1A1A2E/E63946?text=ASUS', badge:'hot', stock:6 },
+      { id:'p9', name:'Sony WH-1000XM5', category:'Électronique', price:28000, oldPrice:32000, rating:4.8, reviews:445, image:'https://via.placeholder.com/400x400/0A1628/ffffff?text=Sony', badge:'sale', stock:20 }
+    ];
+    function renderStars(r) { return '★'.repeat(Math.floor(r)) + '☆'.repeat(5 - Math.floor(r)); }
+    rel.innerHTML = relData.map(p => `
+      <div class="product-card">
+        <div class="product-img-wrap">
+          <img src="${p.image}" alt="${p.name}" loading="lazy">
+          ${p.badge ? `<div class="product-badges"><span class="badge badge-${p.badge}">${p.badge==='sale'?'Promo':p.badge==='new'?'Nouveau':'Populaire'}</span></div>` : ''}
+          <button class="wishlist-btn" data-wishlist-id="${p.id}" onclick="Wishlist.toggle({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'})">❤</button>
+          <div class="product-actions-hover">
+            <button class="btn btn-sm btn-primary" onclick='Cart.add({id:"${p.id}",name:"${p.name}",price:${p.price},image:"${p.image}",stock:${p.stock}})'>+ Panier</button>
+            <a href="product.html?id=${p.id}" class="btn btn-sm" style="background:rgba(255,255,255,.9);color:#0A1628">Voir</a>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-category">${p.category}</div>
+          <div class="product-name"><a href="product.html?id=${p.id}" style="color:inherit">${p.name}</a></div>
+          <div class="product-rating"><span class="stars">${renderStars(p.rating)}</span><span class="rating-count">(${p.reviews})</span></div>
+          <div class="product-price"><span class="price-current" data-price="${p.price}">G ${p.price.toLocaleString()}</span>${p.oldPrice?`<span class="price-old">G ${p.oldPrice.toLocaleString()}</span>`:''}</div>
+        </div>
+      </div>`).join('');
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jloodna | Global Trading</title>
+  <meta name="description" content="Explorez notre catalogue de produits. Filtrez par catégorie, prix, marque. Paiement en HTG.">
+  <link rel="icon" type="image/svg+xml" href="./frontend/assets/images/favicon.png">
+  <link rel="stylesheet" href="../assets/css/variable.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../../main.css">
+
+
+
+  <style>
+    .shop-layout { display:flex; gap:24px; padding:32px 0; }
+    .shop-main { flex:1; min-width:0; }
+    .shop-toolbar { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--white); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); margin-bottom:20px; gap:12px; flex-wrap:wrap; }
+    .view-toggle { display:flex; gap:4px; }
+    .view-btn { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:6px; color:var(--gray-500); transition:all .2s; }
+    .view-btn.active { background:var(--accent); color:var(--primary); }
+    .filter-toggle-mob { display:none; }
+    .price-range-vals { display:flex; justify-content:space-between; font-size:.8rem; color:var(--gray-600); margin-top:8px; }
+    .color-swatches { display:flex; flex-wrap:wrap; gap:8px; }
+    .color-swatch { width:24px; height:24px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:all .2s; }
+    .color-swatch.selected { border-color:var(--primary); transform:scale(1.15); }
+    .active-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+    .filter-tag { display:inline-flex; align-items:center; gap:6px; background:var(--primary); color:var(--white); padding:4px 12px; border-radius:var(--radius-full); font-size:.78rem; font-weight:500; }
+    .filter-tag button { color:rgba(255,255,255,.7); font-size:.9rem; }
+    @media(max-width:900px){.filter-sidebar{position:fixed;top:0;left:-300px;height:100vh;background:var(--white);z-index:300;transition:left .3s;overflow-y:auto;padding-top:60px;width:280px;box-shadow:var(--shadow-xl);}.filter-sidebar.open{left:0;}.filter-toggle-mob{display:flex;}}
+    @media(max-width:640px){.shop-toolbar{gap:8px;}.toolbar-right{flex:1;display:flex;justify-content:flex-end;}}
+    .list-view .products-grid { grid-template-columns: 1fr; }
+    .list-view .product-card { flex-direction: row; max-height: 160px; }
+    .list-view .product-img-wrap { width: 160px; flex-shrink: 0; aspect-ratio: auto; height: 160px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER TOP -->
+<div class="header-top"><div class="ticker"><span>🚚 Livraison gratuite dès G 15,000</span><span>🔥 Jusqu'à -40% sur l'électronique</span></div></div>
+
+<header class="header-main">
+  <div class="header-inner">
+    <a href="./index" class="logo"><img src="./frontend/assets/images/logo.png" alt="Jloodna" class="logo-img"><div><div class="logo-text">Jloodna</div><div class="logo-sub">Global Trading</div></div></a>
+    <div class="search-bar" style="position:relative">
+      <select><option value="">Toutes</option><option>Électronique</option><option>Mode</option><option>Maison</option><option>Beauté</option><option>Sports</option></select>
+      <input type="text" id="main-search" placeholder="Rechercher...">
+      <button id="search-btn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+      <div id="search-suggestions" style="position:absolute;top:100%;left:0;right:0;background:#fff;border-radius:0 0 8px 8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:100;display:none"></div>
+    </div>
+    <div class="header-actions">
+      <select class="currency-switcher" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);padding:6px 10px;border-radius:6px;font-size:.8rem;cursor:pointer"><option value="HTG">HTG G</option><option value="USD">USD $</option></select>
+      <button class="icon-btn" id="notif-btn" style="position:relative"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span>Alertes</span><span class="badge" id="notif-badge" style="display:none">0</span></button>
+      <a href="wishlist.html" class="icon-btn" style="position:relative"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>Favoris</span><span class="badge" id="wishlist-badge">0</span></a>
+      <button class="icon-btn" onclick="Cart.open()" style="position:relative"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Panier</span><span class="badge" id="cart-badge">0</span></button>
+      <a href="login.html" class="icon-btn" id="login-btn"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Connexion</span></a>
+      <div id="user-menu" style="display:none"><button class="icon-btn" data-dropdown="user-dropdown"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="user-name">Compte</span></button><div id="user-dropdown" style="position:absolute;top:100%;right:0;min-width:200px;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.14);z-index:200;overflow:hidden;opacity:0;pointer-events:none;transition:all .2s"><a href="account.html" style="display:flex;padding:12px 16px;color:#374151;font-size:.875rem">👤 Mon Compte</a><a href="orders.html" style="display:flex;padding:12px 16px;color:#374151;font-size:.875rem">📦 Commandes</a><button onclick="Auth.logout()" style="display:flex;padding:12px 16px;color:#E63946;font-size:.875rem;width:100%;text-align:left">🚪 Déconnexion</button></div></div>
+      <button class="icon-btn filter-toggle-mob" onclick="document.getElementById('filter-sidebar').classList.toggle('open')"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><span>Filtres</span></button>
+    </div>
+  </div>
+</header>
+<nav class="header-nav">
+  <div class="nav-inner">
+    <a href="./frontend/pages/shop" class="nav-all-btn">☰ Catégories</a>
+    <div class="nav-links">
+      <a href="#" class="nav-link">Accueil</a>
+      <a href="./frontend/pages/shop" class="nav-link active">Boutique</a>
+      <a href="./frontend/pages/shop?cat=electronics" class="nav-link">Électronique</a>
+      <a href="./frontend/pages/shop?cat=fashion" class="nav-link">Mode</a>
+      <a href="./frontend/pages/shop?cat=home" class="nav-link">Maison</a>
+      <a href="./frontend/pages/shop" class="nav-link" style="color:#E8C97A">🔥 Promos</a>
+    </div>
+  </div>
+</nav>
+
+<!-- =========================================
+HERO SECTION
+========================================= -->
+
+<section class="hero">
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+
+    <span class="hero-badge">
+      #1 Boutique e-commerce en Haïti
+    </span>
+
+    <h1>
+      Jloodna <span>| Global Trading</span>
+    </h1>
+
+    <p>
+      Découvrez des milliers de produits modernes, technologiques,
+      fashion et lifestyle au meilleur prix en Gourdes Haïtiennes.
+    </p>
+
+    <div class="hero-buttons">
+
+      <a href="./frontend/pages/shop" class="btn-primary">
+        Acheter maintenant
+      </a>
+
+      <a href="./frontend/pages/about" class="btn-secondary">
+        Découvrir
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================================
+FEATURES
+========================================= -->
+
+<section class="features">
+
+  <div class="feature-card">
+    <i class="fa-solid fa-truck-fast"></i>
+    <h3>Livraison Rapide</h3>
+    <p>Livraison disponible partout en Haïti et Sendomenge.</p>
+  </div>
+
+  <div class="feature-card">
+    <i class="fa-solid fa-shield-halved"></i>
+    <h3>Paiement Sécurisé</h3>
+    <p>Visa, Mastercard, PayPal, Natcash et Csh Direk.</p>
+  </div>
+
+  <div class="feature-card">
+    <i class="fa-solid fa-headset"></i>
+    <h3>Support 24/7</h3>
+    <p>Assistance rapide via WhatsApp et Email.</p>
+  </div>
+
+  <div class="feature-card">
+    <i class="fa-solid fa-rotate-left"></i>
+    <h3>Retours Faciles</h3>
+    <p>Politique de retour professionnelle et flexible.</p>
+  </div>
+
+</section>
+
+<!-- =========================================
+CATEGORIES
+========================================= -->
+
+<section class="categories">
+
+  <div class="section-title">
+    <h2>Catégories populaires</h2>
+    <p>Explorez les meilleures catégories de produits</p>
+  </div>
+
+  <div class="categories-grid">
+
+    <div class="category-card">
+      <img src="../assets/images/categories/electronics.jpg" alt="">
+      <div class="category-overlay">
+        <h3>Électronique</h3>
+      </div>
+    </div>
+
+    <div class="category-card">
+      <img src="./frontend/assets/images/categories/fashion.jpg" alt="">
+      <div class="category-overlay">
+        <h3>Mode</h3>
+      </div>
+    </div>
+
+    <div class="category-card">
+      <img src="./frontend/assets/images/categories/shoes.jpg" alt="">
+      <div class="category-overlay">
+        <h3>Chaussures</h3>
+      </div>
+    </div>
+
+    <div class="category-card">
+      <img src="./frontend/assets/images/categories/home.jpg" alt="">
+      <div class="category-overlay">
+        <h3>Maison</h3>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================================
+FEATURED PRODUCTS
+========================================= -->
+
+<section class="products-section">
+
+  <div class="section-title">
+    <h2>Produits vedettes</h2>
+    <p>Les meilleures ventes du moment</p>
+  </div>
+
+  <div class="products-grid">
+
+    <!-- PRODUCT -->
+
+    <div class="product-card">
+
+      <div class="product-badge">-20%</div>
+
+      <div class="product-image">
+        <img src="./frontend/assets/images/products/product1.png" alt="">
+      </div>
+
+      <div class="product-info">
+
+        <span class="product-category">Smartphone</span>
+
+        <h3>
+          iPhone Premium
+        </h3>
+
+        <div class="product-rating">
+          ★★★★★
+        </div>
+
+        <div class="product-price">
+          <span class="new-price">G 45,000</span>
+          <span class="old-price">G 56,000</span>
+        </div>
+
+        <div class="product-actions">
+
+          <button class="add-cart-btn">
+            Ajouter au panier
+          </button>
+
+          <button class="wishlist-btn">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- PRODUCT -->
+
+    <div class="product-card">
+
+      <div class="product-image">
+        <img src="./frontend/assets/images/products/product2.png" alt="">
+      </div>
+
+      <div class="product-info">
+
+        <span class="product-category">Fashion</span>
+
+        <h3>
+          Sneakers Urban
+        </h3>
+
+        <div class="product-rating">
+          ★★★★★
+        </div>
+
+        <div class="product-price">
+          <span class="new-price">G 8,500</span>
+        </div>
+
+        <div class="product-actions">
+
+          <button class="add-cart-btn">
+            Ajouter au panier
+          </button>
+
+          <button class="wishlist-btn">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- PRODUCT -->
+
+    <div class="product-card">
+
+      <div class="product-badge">NEW</div>
+
+      <div class="product-image">
+        <img src="../assets/images/products/product3.png" alt="">
+      </div>
+
+      <div class="product-info">
+
+        <span class="product-category">Accessoires</span>
+
+        <h3>
+          Montre Luxe
+        </h3>
+
+        <div class="product-rating">
+          ★★★★★
+        </div>
+
+        <div class="product-price">
+          <span class="new-price">G 15,000</span>
+        </div>
+
+        <div class="product-actions">
+
+          <button class="add-cart-btn">
+            Ajouter au panier
+          </button>
+
+          <button class="wishlist-btn">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- PRODUCT -->
+
+    <div class="product-card">
+
+      <div class="product-image">
+        <img src="./images/product4.png" alt="">
+      </div>
+
+      <div class="product-info">
+
+        <span class="product-category">Gaming</span>
+
+        <h3>
+          Casque Gamer RGB
+        </h3>
+
+        <div class="product-rating">
+          ★★★★★
+        </div>
+
+        <div class="product-price">
+          <span class="new-price">G 6,500</span>
+        </div>
+
+        <div class="product-actions">
+
+          <button class="add-cart-btn">
+            Ajouter au panier
+          </button>
+
+          <button class="wishlist-btn">
+            <i class="fa-regular fa-heart"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================================
+PROMO SECTION
+========================================= -->
+
+<section class="promo-section">
+
+  <div class="promo-content">
+
+    <span class="promo-badge">
+      Promotion Exclusive
+    </span>
+
+    <h2>
+      Jusqu'à 50% de réduction
+    </h2>
+
+    <p>
+      Profitez des meilleures offres sur nos produits
+      électroniques et fashion.
+    </p>
+
+    <a href="./frontend/pages/shop" class="btn-primary">
+      Voir les offres
+    </a>
+
+  </div>
+
+</section>
+
+<!-- =========================================
+NEWSLETTER
+========================================= -->
+
+<section class="newsletter">
+
+  <div class="newsletter-content">
+
+    <h2>
+      Rejoignez la communauté Jloodna
+    </h2>
+
+    <p>
+      Recevez les nouveautés, promotions et offres exclusives.
+    </p>
+
+    <form class="newsletter-form">
+
+      <input type="email"
+        placeholder="Votre adresse email">
+
+      <button type="submit">
+        S'abonner
+      </button>
+
+    </form>
+
+  </div>
+
+</section>
+
+<!-- =========================================
+FOOTER
+========================================= -->
+
+<footer class="footer">
+
+  <div class="footer-grid">
+
+    <div class="footer-column">
+
+      <img src="logo.png"
+        class="footer-logo"
+        alt="">
+
+      <p>
+        La boutique e-commerce moderne dédiée au marché haïtien.
+      </p>
+
+      <div class="social-icons">
+
+        <a href="https://www.facebook.com/jloodna">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+
+        <a href="https://www.instagram.com/@jloodna">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+
+        <a href="https://www.x.com/@jloodna">
+          <i class="fa-brands fa-x-twitter"></i>
+        </a>
+
+        <a href="https://www.tiktok.com//@jloodna">
+          <i class="fa-brands fa-tiktok"></i>
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="footer-column">
+
+      <h3>Navigation</h3>
+
+      <a href="./frontend/pages/index">Accueil</a>
+      <a href="./frontend/pages/shop">Boutique</a>
+      <a href="./frontend/pages/about">À propos</a>
+      <a href="./frontend/pages/contact">Contact</a>
+
+    </div>
+
+    <div class="footer-column">
+
+      <h3>Informations</h3>
+
+      <a href="./frontend/pages/privacy">Confidentialité</a>
+      <a href="./frontend/pages/returns">Retours</a>
+      <a href="./frontend/pages/terms">Conditions</a>
+      <a href="./frontend/pages/faq">FAQ</a>
+
+    </div>
+
+    <div class="footer-column">
+
+      <h3>Support</h3>
+
+      <p>Email:<a href="mailto:jloodna@gmail.com"> Contact@JLoodna.com</a></p>
+      <p><a href="https://wa.me/message/Y75WJGSGU3JZI1">Whatsapp</a></p>
+     
+
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+
+    <p>
+      © 2026 Jloodna | Global Trading —
+      Tous droits réservés.
+    </p>
+   <p>Port-au-Prince, Haïti</p>
+  </div>
+
+</footer>
+
+<!-- =========================================
+JS
+========================================= -->
+
+<script src="./frontend/assets/js/app.js"></script>
+<script>
+const ALL_PRODUCTS = [
+  {id:'p1',name:'iPhone 15 Pro 256GB',category:'electronics',categoryName:'Électronique',price:45000,oldPrice:52000,rating:4.9,reviews:234,image:'https://via.placeholder.com/400x400/0A1628/C9A84C?text=iPhone+15',badge:'sale',stock:15,brand:'Apple'},
+  {id:'p2',name:'Samsung Galaxy S24 Ultra',category:'electronics',categoryName:'Électronique',price:52000,oldPrice:null,rating:4.8,reviews:189,image:'https://via.placeholder.com/400x400/1A3A5C/ffffff?text=Samsung',badge:'new',stock:8,brand:'Samsung'},
+  {id:'p3',name:'MacBook Air M2',category:'electronics',categoryName:'Électronique',price:85000,oldPrice:95000,rating:4.9,reviews:312,image:'https://via.placeholder.com/400x400/0A1628/C9A84C?text=MacBook',badge:'hot',stock:5,brand:'Apple'},
+  {id:'p4',name:'Robe de Soirée Élégante',category:'fashion',categoryName:'Mode',price:8500,oldPrice:12000,rating:4.7,reviews:98,image:'https://via.placeholder.com/400x400/2DC653/ffffff?text=Robe',badge:'sale',stock:22,brand:'Divers'},
+  {id:'p5',name:'Chaussures Nike Air Max',category:'sports',categoryName:'Sports',price:14500,oldPrice:null,rating:4.8,reviews:156,image:'https://via.placeholder.com/400x400/E63946/ffffff?text=Nike',badge:'new',stock:30,brand:'Nike'},
+  {id:'p6',name:'Télévision Samsung 55" 4K',category:'electronics',categoryName:'Électronique',price:68000,oldPrice:78000,rating:4.7,reviews:87,image:'https://via.placeholder.com/400x400/112240/E8C97A?text=TV+4K',badge:'sale',stock:12,brand:'Samsung'},
+  {id:'p7',name:'Parfum Chanel No.5',category:'beauty',categoryName:'Beauté',price:22000,oldPrice:null,rating:5.0,reviews:201,image:'https://via.placeholder.com/400x400/C9A84C/0A1628?text=Chanel',badge:'featured',stock:18,brand:'Chanel'},
+  {id:'p8',name:'Laptop Gaming ASUS ROG',category:'electronics',categoryName:'Électronique',price:120000,oldPrice:135000,rating:4.9,reviews:67,image:'https://via.placeholder.com/400x400/1A1A2E/E63946?text=ASUS',badge:'hot',stock:6,brand:'Asus'},
+  {id:'p9',name:'Écouteurs Sony WH-1000XM5',category:'electronics',categoryName:'Électronique',price:28000,oldPrice:32000,rating:4.8,reviews:445,image:'https://via.placeholder.com/400x400/0A1628/ffffff?text=Sony',badge:'sale',stock:20,brand:'Sony'},
+  {id:'p10',name:'Veste Adidas Originals',category:'fashion',categoryName:'Mode',price:9800,oldPrice:null,rating:4.6,reviews:73,image:'https://via.placeholder.com/400x400/1A3A5C/ffffff?text=Adidas',badge:'new',stock:14,brand:'Adidas'},
+  {id:'p11',name:'Smart TV LG OLED 65"',category:'electronics',categoryName:'Électronique',price:145000,oldPrice:160000,rating:4.9,reviews:56,image:'https://via.placeholder.com/400x400/0D2B4A/C9A84C?text=LG+OLED',badge:'hot',stock:4,brand:'LG'},
+  {id:'p12',name:'Crème Hydratante L\'Oréal',category:'beauty',categoryName:'Beauté',price:3200,oldPrice:4200,rating:4.5,reviews:312,image:'https://via.placeholder.com/400x400/E8C97A/0A1628?text=Loreal',badge:'sale',stock:60,brand:'L\'Oréal'}
+];
+
+let currentPage = 1;
+let viewMode = 'grid';
+let filteredProducts = [...ALL_PRODUCTS];
+
+function updatePriceRange() {
+  const min = parseInt(document.getElementById('price-min').value);
+  const max = parseInt(document.getElementById('price-max').value);
+  document.getElementById('price-min-val').textContent = 'G ' + min.toLocaleString();
+  document.getElementById('price-max-val').textContent = 'G ' + max.toLocaleString();
+}
+
+function setView(mode) {
+  viewMode = mode;
+  const container = document.getElementById('products-container');
+  document.getElementById('grid-view').classList.toggle('active', mode === 'grid');
+  document.getElementById('list-view-btn').classList.toggle('active', mode === 'list');
+  container.classList.toggle('list-view', mode === 'list');
+  renderProducts();
+}
+
+function renderStars(r) { return '★'.repeat(Math.floor(r)) + '☆'.repeat(5-Math.floor(r)); }
+
+function renderProductCard(p) {
+  const badgeLabels = {sale:'Promo',new:'Nouveau',hot:'Populaire',featured:'Vedette'};
+  const disc = p.oldPrice ? Math.round((1-p.price/p.oldPrice)*100) : 0;
+  return `<div class="product-card">
+    <div class="product-img-wrap">
+      <img src="${p.image}" alt="${p.name}" loading="lazy">
+      <div class="product-badges">${p.badge?`<span class="badge badge-${p.badge}">${badgeLabels[p.badge]||p.badge}</span>`:''}</div>
+      <button class="wishlist-btn" data-wishlist-id="${p.id}" onclick="Wishlist.toggle({id:'${p.id}',name:'${p.name}',price:${p.price},image:'${p.image}'})">❤</button>
+      <div class="product-actions-hover">
+        <button class="btn btn-sm btn-primary" onclick='Cart.add({id:"${p.id}",name:"${p.name}",price:${p.price},image:"${p.image}",stock:${p.stock}})'>+ Panier</button>
+        <a href="product.html?id=${p.id}" class="btn btn-sm" style="background:rgba(255,255,255,.9);color:#0A1628">Voir</a>
+      </div>
+    </div>
+    <div class="product-body">
+      <div class="product-category">${p.categoryName}</div>
+      <div class="product-name"><a href="product.html?id=${p.id}" style="color:inherit">${p.name}</a></div>
+      <div class="product-rating"><span class="stars">${renderStars(p.rating)}</span><span class="rating-count">(${p.reviews})</span></div>
+      <div class="product-price">
+        <span class="price-current" data-price="${p.price}">G ${p.price.toLocaleString()}</span>
+        ${p.oldPrice?`<span class="price-old">G ${p.oldPrice.toLocaleString()}</span>`:''}
+        ${disc>0?`<span class="price-discount">-${disc}%</span>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderProducts() {
+  const grid = document.getElementById('products-grid');
+  const count = document.getElementById('results-count');
+  if (!filteredProducts.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:#6B7280"><div style="font-size:3rem;margin-bottom:16px">🔍</div><div style="font-weight:600;margin-bottom:8px">Aucun produit trouvé</div><div style="font-size:.875rem">Modifiez vos filtres pour trouver ce que vous cherchez</div></div>';
+  } else {
+    grid.innerHTML = filteredProducts.map(renderProductCard).join('');
+  }
+  if (count) count.innerHTML = `Affichage de <strong>${filteredProducts.length}</strong> produits`;
+}
+
+function applyFilters() {
+  const sortVal = document.getElementById('sort-select')?.value || 'featured';
+  const catInputs = document.querySelectorAll('input[name="cat"]:checked');
+  const cat = catInputs.length ? catInputs[0].value : '';
+  const minPrice = parseInt(document.getElementById('price-min')?.value || 0);
+  const maxPrice = parseInt(document.getElementById('price-max')?.value || 150000);
+  const params = new URLSearchParams(window.location.search);
+  const searchQ = params.get('q') || '';
+
+  filteredProducts = ALL_PRODUCTS.filter(p => {
+    if (cat && p.category !== cat) return false;
+    if (p.price < minPrice || p.price > maxPrice) return false;
+    if (searchQ && !p.name.toLowerCase().includes(searchQ.toLowerCase())) return false;
+    return true;
+  });
+
+  if (sortVal === 'price-asc') filteredProducts.sort((a,b) => a.price - b.price);
+  else if (sortVal === 'price-desc') filteredProducts.sort((a,b) => b.price - a.price);
+  else if (sortVal === 'rating') filteredProducts.sort((a,b) => b.rating - a.rating);
+  else if (sortVal === 'newest') filteredProducts.reverse();
+  renderProducts();
+}
+
+function clearFilters() {
+  document.querySelectorAll('input[name="cat"]')[0].checked = true;
+  document.getElementById('price-min').value = 0;
+  document.getElementById('price-max').value = 150000;
+  updatePriceRange();
+  filteredProducts = [...ALL_PRODUCTS];
+  renderProducts();
+}
+
+function goPage(p) { currentPage = p; window.scrollTo({top:0,behavior:'smooth'}); }
+function prevPage() { if(currentPage>1){currentPage--;goPage(currentPage);} }
+function nextPage() { currentPage++;goPage(currentPage); }
+
+// Parse URL params on load
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get('cat');
+  if (cat) {
+    const radio = document.querySelector(`input[name="cat"][value="${cat}"]`);
+    if (radio) radio.checked = true;
+  }
+  // Mobile filter close button
+  const closeBtn = document.getElementById('filter-close');
+  if (closeBtn) closeBtn.style.display = 'flex';
+  applyFilters();
+});
+</script>
+</corps>
+      </ html >

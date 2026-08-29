@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>maintenance | Jloodna</title><link rel="icon" type="image/svg+xml" href="../assets/images/favicon.svg"><link rel="stylesheet" href="../assets/css/main.css"></head>
+<body style="background:linear-gradient(135deg,#0A1628 0%,#1A3A5C 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">
+<div style="text-align:center;color:#fff;max-width:500px">
+  <img src="../assets/images/logo.svg" style="width:60px;height:60px;border-radius:12px;margin-bottom:24px">
+  <div style="font-size:5rem;margin-bottom:16px">🔧</div>
+  <h2 style="font-family:Georgia,serif;font-size:1.8rem;margin-bottom:10px">Site en maintenance</h2>
+  <p style="color:#9CA3AF;margin-bottom:24px;line-height:1.6">Nous effectuons des améliorations pour mieux vous servir. Nous serons de retour très bientôt!</p>
+  <div style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:12px;padding:16px;margin-bottom:24px">
+    <div style="color:#C9A84C;font-size:.9rem">Retour estimé dans:</div>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:10px">
+      <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:10px 16px;font-family:monospace;font-size:1.2rem;font-weight:700" id="mt-h">02</div>
+      <div style="color:#C9A84C;font-size:1.5rem;align-self:center">:</div>
+      <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:10px 16px;font-family:monospace;font-size:1.2rem;font-weight:700" id="mt-m">30</div>
+      <div style="color:#C9A84C;font-size:1.5rem;align-self:center">:</div>
+      <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:10px 16px;font-family:monospace;font-size:1.2rem;font-weight:700" id="mt-s">00</div>
+    </div>
+  </div>
+  <p style="color:#6B7280;font-size:.85rem">Besoin d'aide urgente? <a href="mailto:support@jloodna.ht" style="color:#C9A84C">support@jloodna.ht</a></p>
+  <script>
+    let t=9000;setInterval(()=>{t--;const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=t%60;document.getElementById('mt-h').textContent=String(h).padStart(2,'0');document.getElementById('mt-m').textContent=String(m).padStart(2,'0');document.getElementById('mt-s').textContent=String(s).padStart(2,'0');if(t<=0)t=0;},1000);
+  </script>
+</div>
+</body></html>

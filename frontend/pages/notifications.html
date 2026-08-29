@@ -1,0 +1,766 @@
+<!-- notifications.html -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0" />
+
+  <title>Notifications | Jloodna</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet"
+    href="../assets/css/variables.css">
+
+  <link rel="stylesheet"
+    href="../assets/css/main.css">
+
+  <link rel="stylesheet"
+    href="../assets/css/notifications.css">
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+</head>
+
+<body>
+
+<!-- =========================================
+HEADER TOP
+========================================= -->
+
+<div class="header-top">
+
+  <div class="ticker">
+
+    <span>
+      🔔 Notifications en temps réel
+    </span>
+
+    <span>
+      🚚 Suivez vos commandes instantanément
+    </span>
+
+  </div>
+
+</div>
+
+<!-- =========================================
+HEADER
+========================================= -->
+
+<header class="header-main">
+
+  <div class="header-inner">
+
+    <!-- LOGO -->
+    <a href="../../index.html"
+      class="logo">
+
+      <img src="../images/logo.png"
+        alt="Jloodna"
+        class="logo-img">
+
+      <div>
+
+        <div class="logo-text">
+          Jloodna
+        </div>
+
+        <div class="logo-sub">
+          Global Trading
+        </div>
+
+      </div>
+
+    </a>
+
+    <!-- SEARCH -->
+    <div class="search-bar">
+
+      <input type="text"
+        placeholder="Rechercher une notification...">
+
+      <button>
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="header-actions">
+
+      <a href="wishlist.html"
+        class="icon-btn">
+
+        <i class="fa-regular fa-heart"></i>
+
+        <span>
+          Favoris
+        </span>
+
+      </a>
+
+      <a href="cart.html"
+        class="icon-btn">
+
+        <i class="fa-solid fa-cart-shopping"></i>
+
+        <span>
+          Panier
+        </span>
+
+      </a>
+
+      <a href="notifications.html"
+        class="icon-btn active-icon">
+
+        <i class="fa-regular fa-bell"></i>
+
+        <span>
+          Notifications
+        </span>
+
+        <div class="live-dot"></div>
+
+      </a>
+
+      <a href="account.html"
+        class="icon-btn">
+
+        <i class="fa-regular fa-user"></i>
+
+        <span>
+          Compte
+        </span>
+
+      </a>
+
+    </div>
+
+  </div>
+
+</header>
+
+<!-- =========================================
+NAVIGATION
+========================================= -->
+
+<nav class="header-nav">
+
+  <div class="nav-inner">
+
+    <a href="shop.html"
+      class="nav-all-btn">
+
+      ☰ Catégories
+
+    </a>
+
+    <div class="nav-links">
+
+      <a href="../../index.html"
+        class="nav-link">
+        Accueil
+      </a>
+
+      <a href="shop.html"
+        class="nav-link">
+        Boutique
+      </a>
+
+      <a href="wishlist.html"
+        class="nav-link">
+        Favoris
+      </a>
+
+      <a href="orders.html"
+        class="nav-link">
+        Commandes
+      </a>
+
+      <a href="notifications.html"
+        class="nav-link active">
+        Notifications
+      </a>
+
+    </div>
+
+  </div>
+
+</nav>
+
+<!-- =========================================
+PAGE HERO
+========================================= -->
+
+<section class="notif-hero">
+
+  <div class="notif-hero-overlay"></div>
+
+  <div class="notif-hero-content">
+
+    <span class="hero-badge">
+      Centre de notifications
+    </span>
+
+    <h1>
+      Notifications clients
+    </h1>
+
+    <p>
+      Suivez vos commandes,
+      promotions, paiements et
+      activités en temps réel.
+    </p>
+
+  </div>
+
+</section>
+
+<!-- =========================================
+NOTIFICATIONS
+========================================= -->
+
+<section class="notifications-section">
+
+  <div class="container">
+
+    <!-- TOP BAR -->
+    <div class="notifications-toolbar">
+
+      <div class="toolbar-left">
+
+        <h2>
+          Vos notifications
+        </h2>
+
+        <span class="notif-count"
+          id="notif-count">
+          12 nouvelles
+        </span>
+
+      </div>
+
+      <div class="toolbar-right">
+
+        <button class="toolbar-btn"
+          id="mark-all-btn">
+
+          <i class="fa-solid fa-check-double"></i>
+
+          Tout marquer comme lu
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- FILTERS -->
+    <div class="notifications-filters">
+
+      <button class="filter-btn active">
+        Toutes
+      </button>
+
+      <button class="filter-btn">
+        Commandes
+      </button>
+
+      <button class="filter-btn">
+        Promotions
+      </button>
+
+      <button class="filter-btn">
+        Paiements
+      </button>
+
+      <button class="filter-btn">
+        Système
+      </button>
+
+    </div>
+
+    <!-- LIST -->
+    <div class="notifications-list"
+      id="notifications-list">
+
+      <!-- ITEM -->
+      <div class="notification-card unread realtime">
+
+        <div class="notification-icon order">
+
+          <i class="fa-solid fa-box"></i>
+
+        </div>
+
+        <div class="notification-content">
+
+          <div class="notification-top">
+
+            <h3>
+              Commande expédiée
+            </h3>
+
+            <span class="notif-time">
+              il y a 2 min
+            </span>
+
+          </div>
+
+          <p>
+            Votre commande
+            <strong>#JL94831</strong>
+            est en route vers
+            Port-au-Prince.
+          </p>
+
+          <div class="notification-meta">
+
+            <span class="notif-badge blue">
+              Livraison
+            </span>
+
+            <span class="notif-live">
+              EN DIRECT
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ITEM -->
+      <div class="notification-card unread">
+
+        <div class="notification-icon payment">
+
+          <i class="fa-solid fa-credit-card"></i>
+
+        </div>
+
+        <div class="notification-content">
+
+          <div class="notification-top">
+
+            <h3>
+              Paiement confirmé
+            </h3>
+
+            <span class="notif-time">
+              il y a 10 min
+            </span>
+
+          </div>
+
+          <p>
+            Votre paiement de
+            <strong>G 18,500</strong>
+            a été validé avec succès.
+          </p>
+
+          <div class="notification-meta">
+
+            <span class="notif-badge green">
+              Paiement
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ITEM -->
+      <div class="notification-card">
+
+        <div class="notification-icon promo">
+
+          <i class="fa-solid fa-fire"></i>
+
+        </div>
+
+        <div class="notification-content">
+
+          <div class="notification-top">
+
+            <h3>
+              Nouvelle promotion
+            </h3>
+
+            <span class="notif-time">
+              Aujourd’hui
+            </span>
+
+          </div>
+
+          <p>
+            Jusqu’à
+            <strong>-50%</strong>
+            sur les produits électroniques.
+          </p>
+
+          <div class="notification-meta">
+
+            <span class="notif-badge orange">
+              Promo
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ITEM -->
+      <div class="notification-card">
+
+        <div class="notification-icon success">
+
+          <i class="fa-solid fa-circle-check"></i>
+
+        </div>
+
+        <div class="notification-content">
+
+          <div class="notification-top">
+
+            <h3>
+              Livraison effectuée
+            </h3>
+
+            <span class="notif-time">
+              Hier
+            </span>
+
+          </div>
+
+          <p>
+            Votre colis
+            <strong>#JL84521</strong>
+            a été livré avec succès.
+          </p>
+
+          <div class="notification-meta">
+
+            <span class="notif-badge green">
+              Livraison
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ITEM -->
+      <div class="notification-card">
+
+        <div class="notification-icon system">
+
+          <i class="fa-solid fa-shield-halved"></i>
+
+        </div>
+
+        <div class="notification-content">
+
+          <div class="notification-top">
+
+            <h3>
+              Sécurité du compte
+            </h3>
+
+            <span class="notif-time">
+              2 jours
+            </span>
+
+          </div>
+
+          <p>
+            Une nouvelle connexion
+            à votre compte a été détectée.
+          </p>
+
+          <div class="notification-meta">
+
+            <span class="notif-badge gray">
+              Sécurité
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================================
+REALTIME PANEL
+========================================= -->
+
+<section class="live-section">
+
+  <div class="container">
+
+    <div class="live-card">
+
+      <div class="live-header">
+
+        <div>
+
+          <span class="live-badge">
+            ● Temps réel
+          </span>
+
+          <h2>
+            Activité récente
+          </h2>
+
+        </div>
+
+      </div>
+
+      <div class="live-feed"
+        id="live-feed">
+
+        <div class="feed-item">
+
+          <span class="feed-dot"></span>
+
+          <p>
+            Une nouvelle promotion
+            vient d’être publiée.
+          </p>
+
+        </div>
+
+        <div class="feed-item">
+
+          <span class="feed-dot"></span>
+
+          <p>
+            Votre colis est arrivé
+            au centre logistique.
+          </p>
+
+        </div>
+
+        <div class="feed-item">
+
+          <span class="feed-dot"></span>
+
+          <p>
+            Paiement Natcash validé.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================================
+FOOTER
+========================================= -->
+
+<footer class="footer">
+
+  <div class="footer-grid">
+
+    <!-- BRAND -->
+    <div class="footer-column">
+
+      <img src="../images/logo.png"
+        class="footer-logo"
+        alt="Jloodna">
+
+      <p>
+        La plateforme e-commerce
+        moderne dédiée au marché
+        haïtien.
+      </p>
+
+    </div>
+
+    <!-- NAV -->
+    <div class="footer-column">
+
+      <h3>
+        Navigation
+      </h3>
+
+      <a href="../../index.html">
+        Accueil
+      </a>
+
+      <a href="shop.html">
+        Boutique
+      </a>
+
+      <a href="orders.html">
+        Commandes
+      </a>
+
+      <a href="notifications.html">
+        Notifications
+      </a>
+
+    </div>
+
+    <!-- INFOS -->
+    <div class="footer-column">
+
+      <h3>
+        Informations
+      </h3>
+
+      <a href="privacy.html">
+        Confidentialité
+      </a>
+
+      <a href="returns.html">
+        Retours
+      </a>
+
+      <a href="faq.html">
+        FAQ
+      </a>
+
+    </div>
+
+    <!-- SUPPORT -->
+    <div class="footer-column">
+
+      <h3>
+        Support
+      </h3>
+
+      <p>
+        Email :
+        <a href="mailto:contact@jloodna.com">
+          contact@jloodna.com
+        </a>
+      </p>
+
+      <p>
+        Port-au-Prince, Haïti
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+
+    <p>
+      © 2026 Jloodna | Global Trading —
+      Tous droits réservés.
+    </p>
+
+  </div>
+
+</footer>
+
+<!-- =========================================
+JAVASCRIPT
+========================================= -->
+
+<script>
+
+const notifications = document.querySelectorAll(
+  '.notification-card'
+);
+
+const markAllBtn =
+  document.getElementById(
+    'mark-all-btn'
+  );
+
+markAllBtn.addEventListener(
+  'click',
+  () => {
+
+    notifications.forEach(card => {
+      card.classList.remove('unread');
+    });
+
+    document.getElementById(
+      'notif-count'
+    ).innerText =
+      '0 nouvelle notification';
+
+  }
+);
+
+/* =========================================
+REALTIME SIMULATION
+========================================= */
+
+const liveFeed =
+  document.getElementById(
+    'live-feed'
+  );
+
+const realtimeMessages = [
+
+  'Votre commande #JL77821 a été confirmée.',
+
+  'Une nouvelle offre Flash vient d’arriver.',
+
+  'Paiement MonCash accepté.',
+
+  'Votre colis est arrivé à Port-au-Prince.',
+
+  'Nouveau produit ajouté à la boutique.'
+
+];
+
+setInterval(() => {
+
+  const div =
+    document.createElement('div');
+
+  div.className = 'feed-item';
+
+  div.innerHTML = `
+    <span class="feed-dot"></span>
+    <p>
+      ${
+        realtimeMessages[
+          Math.floor(
+            Math.random() *
+            realtimeMessages.length
+          )
+        ]
+      }
+    </p>
+  `;
+
+  liveFeed.prepend(div);
+
+  if (liveFeed.children.length > 6) {
+    liveFeed.removeChild(
+      liveFeed.lastElementChild
+    );
+  }
+
+}, 5000);
+
+</script>
+
+</body>
+</html>

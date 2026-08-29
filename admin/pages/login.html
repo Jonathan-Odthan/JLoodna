@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion | Jloodna Global Trading</title>
+  <link rel="icon" type="image/svg+xml" href="./frontend/assets/images/favicon.png">
+  <link rel="stylesheet" href="./frontend/assets/css/main.css">
+  <style>
+    body { background: linear-gradient(135deg, #0A1628 0%, #1A3A5C 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .auth-card { background: #fff; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,.3); width: 100%; max-width: 440px; overflow: hidden; }
+    .auth-header { background: linear-gradient(135deg, #0A1628, #1A3A5C); padding: 32px; text-align: center; position: relative; }
+    .auth-body { padding: 32px; }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: #9CA3AF; font-size: .85rem; }
+    .divider::before, .divider::after { content:''; flex:1; height:1px; background:#E5E7EB; }
+    .social-login { display: flex; gap: 10px; }
+    .social-login-btn { flex: 1; padding: 10px; border: 2px solid #E5E7EB; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: .875rem; font-weight: 500; color: #374151; transition: all .2s; cursor: pointer; background: #fff; }
+    .social-login-btn:hover { border-color: #C9A84C; background: #FFF9ED; }
+    .password-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #9CA3AF; cursor: pointer; font-size: 1rem; background: none; border: none; }
+    .input-wrap { position: relative; }
+  </style>
+</head>
+<body>
+<div class="auth-card">
+  <div class="auth-header">
+    <a href="./index" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:16px">
+      <img src="./frontend/assets/images/logo.png" alt="Jloodna" style="width:44px;height:44px;border-radius:10px">
+      <div style="text-align:left"><div style="font-family:Georgia,serif;color:#C9A84C;font-size:1.3rem;font-weight:700">Jloodna</div><div style="color:#9CA3AF;font-size:.65rem;letter-spacing:2px">GLOBAL TRADING</div></div>
+    </a>
+    <h2 style="color:#fff;font-family:Georgia,serif;font-size:1.5rem;margin-bottom:4px">Bon retour!</h2>
+    <p style="color:#9CA3AF;font-size:.875rem">Connectez-vous à votre compte</p>
+  </div>
+  <div class="auth-body">
+    <div id="login-error" class="alert alert-error" style="display:none;margin-bottom:16px"></div>
+
+    <div class="form-group">
+      <label class="form-label">Adresse email <span class="req">*</span></label>
+      <input type="email" id="email" class="form-input" placeholder="votre@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label class="form-label" style="display:flex;justify-content:space-between">
+        <span>Mot de passe <span class="req">*</span></span>
+        <a href="./forgot-password" style="color:#C9A84C;font-size:.82rem;font-weight:500">Mot de passe oublié?</a>
+      </label>
+      <div class="input-wrap">
+        <input type="password" id="password" class="form-input" placeholder="••••••••" autocomplete="current-password">
+        <button class="password-toggle" onclick="togglePwd('password',this)" type="button">👁</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <input type="checkbox" id="remember" style="accent-color:#C9A84C;width:16px;height:16px">
+      <label for="remember" style="font-size:.875rem;color:#4B5563;cursor:pointer">Se souvenir de moi</label>
+    </div>
+
+    <button class="btn btn-primary btn-block btn-lg" id="login-btn-submit" onclick="doLogin()">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Se connecter
+    </button>
+
+    <div class="divider">ou continuer avec</div>
+    <div class="social-login">
+      <button class="social-login-btn" onclick="Toast.info('Bientôt disponible','Connexion Google')">🔵 Google</button>
+      <button class="social-login-btn" onclick="Toast.info('Bientôt disponible','Connexion Facebook')">🔷 Facebook</button>
+    </div>
+
+    <p style="text-align:center;margin-top:24px;font-size:.875rem;color:#6B7280">
+      Pas encore de compte? <a href="./frontend/pages/register" style="color:#C9A84C;font-weight:600">Créer un compte</a>
+    </p>
+    <p style="text-align:center;margin-top:8px;font-size:.8rem;color:#9CA3AF">
+      <a href="./index" style="color:#9CA3AF">← Retour à l'accueil</a>
+    </p>
+  </div>
+</div>
+<div id="toast-container" class="toast-container"></div>
+<script src="../../frontend/assets/js/app.js"></script>
+<script>
+function togglePwd(id, btn) {
+  const input = document.getElementById(id);
+  input.type = input.type === 'password' ? 'text' : 'password';
+  btn.textContent = input.type === 'password' ? '👁' : '🙈';
+}
+
+async function doLogin() {
+
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const password = document.getElementById('password').value;
+
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn-submit');
+
+  errEl.style.display = 'none';
+
+  if (!email || !password) {
+    errEl.textContent = 'Veuillez remplir tous les champs.';
+    errEl.style.display = 'flex';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = 'Connexion...';
+
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password })
+    });
+    const data = await response.json();
+
+    if (!response.ok || !data.isAdmin) {
+      throw new Error(data.error || 'Accès administrateur refusé');
+    }
+
+      const adminUser = {
+        ...data.user,
+        role: 'admin',
+        loginDate: new Date().toISOString()
+      };
+
+      localStorage.setItem(
+        'jl_admin_user',
+        JSON.stringify(adminUser)
+      );
+
+      Toast.success(
+        'Connexion réussie',
+        'Bienvenue Administrateur'
+      );
+
+      setTimeout(() => {
+        window.location.href = '../../admin.html';
+      }, 1000);
+
+  } catch (error) {
+
+    errEl.textContent =
+      error.message || 'Email ou mot de passe incorrect';
+
+    errEl.style.display = 'flex';
+
+    btn.disabled = false;
+
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
+      Se connecter
+    `;
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+</script>
+</body>
+</html>

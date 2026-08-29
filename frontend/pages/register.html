@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription | Jloodna Global Trading</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/favicon.png">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <style>
+    body { background: linear-gradient(135deg,#0A1628 0%,#1A3A5C 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .auth-card { background:#fff; border-radius:24px; box-shadow:0 20px 60px rgba(0,0,0,.3); width:100%; max-width:480px; overflow:hidden; }
+    .auth-header { background:linear-gradient(135deg,#0A1628,#1A3A5C); padding:28px 32px; text-align:center; }
+    .auth-body { padding:32px; }
+    .input-wrap { position:relative; }
+    .password-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#9CA3AF; cursor:pointer; background:none; border:none; font-size:1rem; }
+    .strength-bar { height:4px; border-radius:2px; background:#E5E7EB; margin-top:6px; overflow:hidden; }
+    .strength-fill { height:100%; border-radius:2px; transition:all .3s; }
+  </style>
+</head>
+<body>
+<div class="auth-card">
+  <div class="auth-header">
+    <a href="./acceuil" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:12px">
+      <img src="../assets/images/logo.png" alt="Jloodna" style="width:40px;height:40px;border-radius:8px">
+      <div style="text-align:left"><div style="font-family:Georgia,serif;color:#C9A84C;font-size:1.2rem;font-weight:700">Jloodna</div><div style="color:#9CA3AF;font-size:.6rem;letter-spacing:2px">GLOBAL TRADING</div></div>
+    </a>
+    <h2 style="color:#fff;font-family:Georgia,serif;font-size:1.4rem;margin-bottom:4px">Créer un compte</h2>
+    <p style="color:#9CA3AF;font-size:.85rem">Rejoignez des milliers de clients satisfaits</p>
+  </div>
+  <div class="auth-body">
+    <div id="reg-error" class="alert alert-error" style="display:none;margin-bottom:16px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Prénom <span class="req">*</span></label>
+        <input type="text" id="fname" class="form-input" placeholder="Jean">
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Nom <span class="req">*</span></label>
+        <input type="text" id="lname" class="form-input" placeholder="Pierre">
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:14px">
+      <label class="form-label">Email <span class="req">*</span></label>
+      <input type="email" id="reg-email" class="form-input" placeholder="votre@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Téléphone</label>
+      <input type="tel" id="phone" class="form-input" placeholder="Tel: 000 0000 0000">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mot de passe <span class="req">*</span></label>
+      <div class="input-wrap">
+        <input type="password" id="reg-pwd" class="form-input" placeholder="Min. 8 caractères" oninput="checkStrength(this.value)">
+        <button class="password-toggle" onclick="togglePwd('reg-pwd',this)" type="button">👁</button>
+      </div>
+      <div class="strength-bar"><div class="strength-fill" id="strength-fill" style="width:0%;background:#E63946"></div></div>
+      <div class="form-hint" id="strength-label">Entrez un mot de passe sécurisé</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Confirmer le mot de passe <span class="req">*</span></label>
+      <div class="input-wrap">
+        <input type="password" id="reg-pwd2" class="form-input" placeholder="Répéter le mot de passe">
+        <button class="password-toggle" onclick="togglePwd('reg-pwd2',this)" type="button">👁</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:20px">
+      <input type="checkbox" id="terms" style="accent-color:#C9A84C;width:16px;height:16px;margin-top:2px;flex-shrink:0">
+      <label for="terms" style="font-size:.85rem;color:#4B5563;cursor:pointer">J'accepte les <a href="terms.html" style="color:#C9A84C;font-weight:600">conditions d'utilisation</a> et la <a href="privacy.html" style="color:#C9A84C;font-weight:600">politique de confidentialité</a></label>
+    </div>
+    <button class="btn btn-primary btn-block btn-lg" id="reg-btn" onclick="doRegister()">
+      🚀 Créer mon compte
+    </button>
+    <p style="text-align:center;margin-top:20px;font-size:.875rem;color:#6B7280">
+      Déjà un compte? <a href="./login" style="color:#C9A84C;font-weight:600">Se connecter</a>
+    </p>
+    <p style="text-align:center;margin-top:8px"><a href="./acceuil" style="color:#9CA3AF;font-size:.8rem">← Retour à l'accueil</a></p>
+  </div>
+</div>
+<div id="toast-container" class="toast-container"></div>
+<script src="../assets/js/app.js"></script>
+<script>
+function togglePwd(id, btn) {
+  const i = document.getElementById(id);
+  i.type = i.type === 'password' ? 'text' : 'password';
+  btn.textContent = i.type === 'password' ? '👁' : '🙈';
+}
+function checkStrength(pwd) {
+  let score = 0;
+  if (pwd.length >= 8) score++;
+  if (/[A-Z]/.test(pwd)) score++;
+  if (/[0-9]/.test(pwd)) score++;
+  if (/[^A-Za-z0-9]/.test(pwd)) score++;
+  const fill = document.getElementById('strength-fill');
+  const label = document.getElementById('strength-label');
+  const colors = ['#E63946','#FFB703','#2DC653','#0A1628'];
+  const labels = ['Très faible','Moyen','Fort','Très fort'];
+  fill.style.width = (score * 25) + '%';
+  fill.style.background = colors[score - 1] || '#E5E7EB';
+  label.textContent = labels[score - 1] || 'Entrez un mot de passe';
+  label.style.color = colors[score - 1] || '#9CA3AF';
+}
+async function doRegister() {
+  const fname = document.getElementById('fname').value.trim();
+  const lname = document.getElementById('lname').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pwd = document.getElementById('reg-pwd').value;
+  const pwd2 = document.getElementById('reg-pwd2').value;
+  const terms = document.getElementById('terms').checked;
+  const errEl = document.getElementById('reg-error');
+  errEl.style.display = 'none';
+  if (!fname || !lname || !email || !pwd) { errEl.innerHTML = '❌ Veuillez remplir tous les champs obligatoires.'; errEl.style.display = 'flex'; return; }
+  if (pwd !== pwd2) { errEl.innerHTML = '❌ Les mots de passe ne correspondent pas.'; errEl.style.display = 'flex'; return; }
+  if (pwd.length < 8) { errEl.innerHTML = '❌ Le mot de passe doit comporter au moins 8 caractères.'; errEl.style.display = 'flex'; return; }
+  if (!terms) { errEl.innerHTML = '❌ Veuillez accepter les conditions d\'utilisation.'; errEl.style.display = 'flex'; return; }
+  const btn = document.getElementById('reg-btn');
+  btn.classList.add('btn-loading'); btn.textContent = 'Création...';
+  try {
+    await Auth.login(email, pwd);
+    Toast.success('Compte créé!', 'Bienvenue sur Jloodna! 🎉');
+    setTimeout(() => { window.location.href = './acceuil'; }, 1200);
+  } catch(e) {
+    errEl.innerHTML = '❌ ' + e.message; errEl.style.display = 'flex';
+    btn.classList.remove('btn-loading'); btn.textContent = '🚀 Créer mon compte';
+  }
+}
+</script>
+</body>
+</html>

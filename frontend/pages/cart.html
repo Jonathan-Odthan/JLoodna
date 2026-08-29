@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panier | Jloodna Global Trading</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/images/favicon.svg">
+  <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body style="background:#f8f5ee">
+<div class="header-top"><div class="ticker"><span>🚚 Livraison gratuite dès G 15,000</span></div></div>
+<header class="header-main"><div class="header-inner"><a href="index.html" class="logo"><img src="../assets/images/logo.svg" class="logo-img" alt="Jloodna"><div><div class="logo-text">Jloodna</div><div class="logo-sub">Global Trading</div></div></a><div class="search-bar"><input type="text" id="main-search" placeholder="Rechercher..."><button id="search-btn">🔍</button><div id="search-suggestions" style="display:none"></div></div><div class="header-actions"><select class="currency-switcher" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);padding:6px 10px;border-radius:6px;font-size:.8rem"><option value="HTG">HTG G</option><option value="USD">USD $</option></select><button class="icon-btn" id="notif-btn" style="position:relative">🔔<span style="font-size:.7rem">Alertes</span><span class="badge" id="notif-badge" style="display:none">0</span></button><a href="wishlist.html" class="icon-btn">❤<span>Favoris</span><span class="badge" id="wishlist-badge">0</span></a><button class="icon-btn" onclick="Cart.open()">🛒<span>Panier</span><span class="badge" id="cart-badge">0</span></button><a href="login.html" class="icon-btn" id="login-btn">👤<span>Connexion</span></a><div id="user-menu" style="display:none"><button class="icon-btn">👤<span id="user-name">Compte</span></button></div></div></div></header>
+<nav class="header-nav"><div class="nav-inner"><a href="shop.html" class="nav-all-btn">☰ Catégories</a><div class="nav-links"><a href="index.html" class="nav-link">Accueil</a><a href="shop.html" class="nav-link">Boutique</a></div></div></nav>
+<div id="notif-panel" class="notif-panel"><div class="notif-panel-header"><span class="notif-panel-title">🔔 Notifications</span><span class="realtime-badge"><span class="realtime-dot"></span>Live</span></div><div class="notif-panel-body" id="notif-panel-body"></div></div>
+<main><div class="container" style="padding-top:32px;padding-bottom:60px">
+  <div class="breadcrumb"><a href="index.html">Accueil</a><span class="sep">›</span><span class="current">Panier</span></div>
+  <h1 style="font-size:1.8rem;margin-bottom:24px">🛒 Mon Panier</h1>
+  <div style="display:grid;grid-template-columns:1fr 360px;gap:24px" id="cart-page-layout">
+    <div>
+      <div id="cart-items-list"></div>
+      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+        <a href="shop.html" class="btn btn-secondary">← Continuer mes achats</a>
+        <button class="btn btn-dark" onclick="Cart.clear();renderCartPage()">🗑 Vider le panier</button>
+      </div>
+    </div>
+    <div>
+      <div style="background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:24px;position:sticky;top:80px">
+        <h4 style="margin-bottom:16px;color:#0A1628">📋 Résumé</h4>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;font-size:.875rem;color:#6B7280"><span>Sous-total</span><span id="pg-subtotal">G 0.00</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.875rem;color:#6B7280"><span>Livraison</span><span id="pg-shipping">G 800.00</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;color:#0A1628;padding-top:8px;border-top:1px solid #f3f4f6"><span>Total HTG</span><span id="pg-total">G 0.00</span></div>
+        </div>
+        <a href="checkout.html" class="btn btn-primary btn-block btn-lg">🔒 Passer la commande →</a>
+        <div style="margin-top:12px;font-size:.75rem;color:#9CA3AF;text-align:center">🔒 Paiement sécurisé SSL • Retours 30 jours</div>
+      </div>
+    </div>
+  </div>
+</div></main>
+<div id="cart-overlay" class="cart-overlay"><div class="cart-drawer"><div class="cart-header"><span class="cart-title">🛒 Panier</span><button onclick="Cart.close()" style="color:#6b7280;font-size:1.5rem;background:none;border:none;cursor:pointer">×</button></div><div class="cart-body" id="cart-body"></div><div class="cart-footer"><div class="cart-total-row total"><span>Total</span><span id="cart-total">G 0.00</span></div><a href="checkout.html" class="btn btn-primary btn-block" style="margin-top:12px">Passer la commande →</a></div></div></div>
+<div id="toast-container" class="toast-container"></div>
+<script src="../assets/js/app.js"></script>
+<script>
+function renderCartPage() {
+  const list = document.getElementById('cart-items-list');
+  if (!Cart.items.length) {
+    list.innerHTML = '<div style="text-align:center;padding:60px;background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)"><div style="font-size:4rem;margin-bottom:16px">🛒</div><h3 style="color:#0A1628;margin-bottom:8px">Votre panier est vide</h3><p style="color:#6B7280;margin-bottom:24px">Découvrez nos produits et commencez vos achats!</p><a href="shop.html" class="btn btn-primary btn-lg">Explorer la boutique</a></div>';
+    return;
+  }
+  list.innerHTML = '<div style="background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden">' +
+    Cart.items.map(i => `
+      <div style="display:flex;gap:16px;padding:20px;border-bottom:1px solid #f3f4f6;align-items:center">
+        <img src="${i.image||''}" onerror="this.src='https://via.placeholder.com/80x80/f3f4f6/9CA3AF?text=?'" style="width:80px;height:80px;object-fit:cover;border-radius:10px;flex-shrink:0">
+        <div style="flex:1">
+          <div style="font-weight:600;color:#0A1628;margin-bottom:4px">${i.name}</div>
+          ${i.variant?`<div style="font-size:.8rem;color:#6B7280;margin-bottom:6px">${i.variant}</div>`:''}
+          <div style="color:#C9A84C;font-weight:700;font-size:1rem">G ${i.price.toLocaleString()}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <div class="qty-control">
+            <button class="qty-btn" onclick="Cart.updateQty('${i.id}','${i.variant||''}',${i.qty-1});renderCartPage()">−</button>
+            <span class="qty-val">${i.qty}</span>
+            <button class="qty-btn" onclick="Cart.updateQty('${i.id}','${i.variant||''}',${i.qty+1});renderCartPage()">+</button>
+          </div>
+          <div style="font-weight:700;color:#0A1628;min-width:80px;text-align:right">G ${(i.price*i.qty).toLocaleString()}</div>
+          <button onclick="Cart.remove('${i.id}','${i.variant||''}');renderCartPage()" style="color:#9CA3AF;font-size:1.2rem;background:none;border:none;cursor:pointer">×</button>
+        </div>
+      </div>`).join('') + '</div>';
+  document.getElementById('pg-subtotal').textContent = 'G ' + Cart.subtotal.toLocaleString();
+  document.getElementById('pg-shipping').textContent = Cart.shipping === 0 ? 'Gratuit' : 'G 800';
+  document.getElementById('pg-total').textContent = 'G ' + Cart.total.toLocaleString();
+}
+document.addEventListener('DOMContentLoaded', renderCartPage);
+</script>
+</body>
+</html>
